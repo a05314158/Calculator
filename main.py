@@ -98,11 +98,12 @@ class Calculator:
     def operate(self, x, y, operation):
         try:
             result = self._perform_operation(x, y, operation)
-            print(f"{x} {operation} {y} = {result}")
-            return result
-        except (ValueError, ZeroDivisionError):
-            print("Error: Invalid input or division by zero")
-            return None
+            if result is not None:
+                print(f"{x} {operation} {y} = {result}")
+            else:
+                print("Error: Invalid operation or division by zero")
+        except ValueError as e:
+            print(f"Error: {e}")
 
     def add(self, x, y):
         return self.operate(x, y, '+')
@@ -117,6 +118,9 @@ class Calculator:
         return self.operate(x, y, '/')
 
     def _perform_operation(self, x, y, operation):
+        if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+            raise ValueError("Invalid input. Please enter valid numbers.")
+
         if operation == '+':
             return x + y
         elif operation == '-':
@@ -124,60 +128,71 @@ class Calculator:
         elif operation == '*':
             return x * y
         elif operation == '/':
-            return x / y if y != 0 else None
+            if y != 0:
+                return x / y
+            else:
+                raise ValueError("Division by zero is not allowed.")
         else:
-            raise ValueError("Invalid operation")
+            raise ValueError("Invalid operation. Supported operations: +, -, *, /.")
 
     def calculate_area(self, shape):
         try:
             if shape == "1":
                 base, height = map(float, input("Enter base and height separated by a space: ").split())
+                if base <= 0 or height <= 0:
+                    raise ValueError("Base and height must be positive numbers.")
                 area = 0.5 * base * height
                 print(f"Area of the triangle: {area}")
             elif shape == "2":
                 side = float(input("Enter the side length: "))
+                if side <= 0:
+                    raise ValueError("Side length must be a positive number.")
                 area = side ** 2
                 print(f"Area of the square: {area}")
             elif shape == "3":
                 radius = float(input("Enter the radius: "))
+                if radius <= 0:
+                    raise ValueError("Radius must be a positive number.")
                 area = 3.14159 * radius ** 2
                 print(f"Area of the circle: {area}")
             else:
                 print("Invalid choice. Supported choices: 1, 2, 3.")
-        except ValueError:
-            print("Error: Invalid input. Please enter valid numbers.")
+        except ValueError as e:
+            print(f"Error: {e}")
 
 
 def main():
     calculator = Calculator()
 
-    print("Choose a calculator:")
-    print("1. Regular Calculator")
-    print("2. Area Calculator")
+    while True:
+        print("\nChoose a calculator:")
+        print("1. Regular Calculator")
+        print("2. Area Calculator")
+        print("3. exit")
 
-    calculator_choice = input("Enter your choice (1 or 2): ")
+        calculator_choice = input("Enter your choice (1, 2, or 3): ")
 
-    if calculator_choice == "1":
-        try:
-            x, y = map(float, input("Enter two numbers separated by a space: ").split())
-            operation_choice = input("Choose an operation (+, -, *, /): ")
+        if calculator_choice == "1":
+            try:
+                x, y = map(float, input("Enter two numbers separated by a space: ").split())
+                operation_choice = input("Choose an operation (+, -, *, /): ")
 
-            if operation_choice in ['+', '-', '*', '/']:
-                calculator.operate(x, y, operation_choice)
-            else:
-                print("Invalid operation. Supported operations: +, -, *, /.")
-        except ValueError:
-            print("Error: Invalid input. Please enter valid numbers.")
-    elif calculator_choice == "2":
-        print("Choose a shape for area calculation:")
-        print("1. Triangle")
-        print("2. Square")
-        print("3. Circle")
+                if operation_choice in ['+', '-', '*', '/']:
+                    calculator.operate(x, y, operation_choice)
+                else:
+                    print("Invalid operation. Supported operations: +, -, *, /.")
+            except ValueError as e:
+                print(f"Error: {e}")
+        elif calculator_choice == "2":
+            print("Choose a shape for area calculation:")
+            print("1. Triangle")
+            print("2. Square")
+            print("3. Circle")
 
-        shape_choice = input("Enter your choice (1, 2, or 3): ")
-        calculator.calculate_area(shape_choice)
-    else:
-        print("Invalid choice. Please enter 1 or 2.")
+            shape_choice = input("Enter your choice (1, 2, or 3): ")
+            calculator.calculate_area(shape_choice)
+        else:
+            print("Invalid choice. Please enter 1, 2, or 3.")
 
 
 if __name__ == "__main__":
