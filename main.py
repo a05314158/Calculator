@@ -191,6 +191,11 @@ def main():
 
             shape_choice = input("Enter your choice (1, 2, or 3): ")
             calculator.calculate_area(shape_choice)
+
+        elif calculator_choice == "3":
+            print('programm end')
+            break
+
         else:
             print("Invalid choice. Please enter 1, 2, or 3.")
 
